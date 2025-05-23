@@ -54,7 +54,7 @@ target_compile_features(KQUEUE PUBLIC cxx_std_20)
 
 if (MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
-    target_compile_options(KQUEUE PUBLIC /W3 /WX)
+    target_compile_options(KQUEUE PUBLIC /W4 /WX)
 else ()
     target_compile_options(KQUEUE PUBLIC -Wall -Wextra -Wpedantic -Werror)
 endif ()
@@ -86,7 +86,7 @@ set_target_properties(KQUEUE PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${PROJECT_V
 # Enable CTests
 enable_testing()
 
-option(BUILD_EXECUTABLE "Build an executable to live debug the queue" ON)
+option(BUILD_EXECUTABLE "Build an executable to live debug the queue" OFF)
 
 if (BUILD_EXECUTABLE)
     add_subdirectory(Test)

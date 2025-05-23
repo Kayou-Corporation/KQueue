@@ -26,7 +26,7 @@ target_compile_features(KQUEUE_TEST PUBLIC cxx_std_20)
 
 if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
-    target_compile_options(KQUEUE_TEST PUBLIC /W3 /WX)
+    target_compile_options(KQUEUE_TEST PUBLIC /W4 /WX)
 else()
     target_compile_options(KQUEUE_TEST PUBLIC -Wall -Wextra -Wpedantic -Werror)
 endif()
