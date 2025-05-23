@@ -1,7 +1,7 @@
 #---------------------------------------#
 #				SETUP					#
 #---------------------------------------#
-cmake_minimum_required(VERSION 3.30.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.29.0 FATAL_ERROR)
 
 project(KQUEUE VERSION 1.0.0 LANGUAGES CXX)
 
@@ -10,7 +10,6 @@ project(KQUEUE VERSION 1.0.0 LANGUAGES CXX)
 # --------------------------------------- #
 #              FIND PACKAGES              #
 # --------------------------------------- #
-
 # Output directories
 set(OUTPUT_DIR_BASE "${CMAKE_SOURCE_DIR}/Builds/${CMAKE_CXX_COMPILER_ID}")
 
@@ -18,18 +17,8 @@ message(STATUS "[${PROJECT_NAME}]: Base output directory: ${OUTPUT_DIR_BASE}")
 
 # Use generator expressions directly in output variables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIR_BASE}/$<CONFIG>")
-
-
-
-# Define output build folder
-set(KQUEUE_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Builds/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
-
-# Define Output Build path for executable
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${KQUEUE_OUTPUT_DIR}")
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OUTPUT_DIR_BASE}/$<CONFIG>/libs")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIR_BASE}/$<CONFIG>/libs")
 
 
 
@@ -88,6 +77,14 @@ set_target_properties(KQUEUE PROPERTIES PREFIX "")
 
 # Set dll name
 set_target_properties(KQUEUE PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+
+
+
+# --------------------------------------- #
+#              ENABLE TESTING             #
+# --------------------------------------- #
+# Enable CTests
+enable_testing()
 
 option(BUILD_EXECUTABLE "Build an executable to live debug the queue" ON)
 
