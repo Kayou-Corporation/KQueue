@@ -44,7 +44,7 @@ void HazardPointerManager::RetireNode(void* node, void(* deleter)(void*)) const
 
 bool HazardPointerManager::IsHazard(void* p) const
 {
-    for (auto hpRecord : m_hpRecords)
+    for (const auto& hpRecord : m_hpRecords)
     {
         if (hpRecord.mPtr.load() == p)
         {

@@ -25,14 +25,14 @@ void LockFreeQueue<T>::Push(const T& value)
     while (true)
     {
         Node* last = m_tail.load(std::memory_order_acquire);     // Get the current tail
-        Node* next = last->next.load(std::memory_order_acquire); // Get the next pointer
+        Node* next = last->mNext.load(std::memory_order_acquire); // Get the next pointer
 
         if (last == m_tail.load(std::memory_order_acquire))      // Recheck consistency
         {
             if (next == nullptr)             // If tail is at the end
             {
                 // Try to link the new node to the current tail
-                if (last->next.compare_exchange_weak(
+                if (last->mNext.compare_exchange_weak(
                     next, new_node,
                     std::memory_order_release, std::memory_order_relaxed))
                 {
@@ -69,14 +69,14 @@ T* LockFreeQueue<T>::Pop()
             continue;
         }
 
-        Node* next = first->next.load(std::memory_order_acquire);
+        Node* next = first->mNext.load(std::memory_order_acquire);
         if (next == nullptr)
         {
             HazardPointerManager::Release(hp);          // Nothing to pop
             return nullptr;
         }
 
-        T* result = next->data;                         // Read the data (safe now)
+        T* result = next->mData;                         // Read the data (safe now)
         if (m_head.compare_exchange_weak(
             first, next,
             std::memory_order_release, std::memory_order_relaxed))
