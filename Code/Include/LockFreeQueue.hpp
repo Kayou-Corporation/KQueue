@@ -4,6 +4,9 @@
 #include <memory>
 #include <atomic>
 
+#include "HazardPointerManager.hpp"
+#include "HazardPointerGuard.hpp"
+
 template <typename T>
 class LockFreeQueue
 {
@@ -13,6 +16,18 @@ public:
 
     void Push(const T& value);
     T* Pop();
+
+    class ThreadCleanup
+    {
+    public:
+        ~ThreadCleanup()
+        {
+            HazardPointerManager::GetInstance().ForceCleanup([](void* p)
+                {
+                    delete static_cast<typename LockFreeQueue<T>::Node*>(p);
+                });
+        }
+    };
 
 private:
     struct Node
