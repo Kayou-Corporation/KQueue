@@ -15,10 +15,10 @@ jobs:
         run: sudo apt-get install doxygen -y
 
       - name: Generate docs
-        run: doxygen ./docs/Doxyfile
+        run: doxygen ./Doc/Doxyfile
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/html
+          publish_dir: ./Doc/html
