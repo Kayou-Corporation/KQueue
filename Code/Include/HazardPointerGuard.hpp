@@ -2,16 +2,39 @@
 
 #pragma once
 
-struct HazardPointer;
+/**
+ * @file HazardPointerGuard.hpp
+ * @brief Provides RAII-style management for hazard pointers.
+ */
 
-class HazardPointerGuard 
+namespace KQueue
 {
-public:
-    HazardPointerGuard();
-    ~HazardPointerGuard();
+    struct HazardPointer;
 
-    [[nodiscard]] HazardPointer* Get() const { return m_hp; }
+    /**
+     * @class HazardPointerGuard
+     * @brief Manages a hazard pointer using RAII to ensure safe memory access in lock-free structures.
+     */
+    class HazardPointerGuard
+    {
+    public:
+        /**
+         * @brief Constructs a HazardPointerGuard and acquires a hazard pointer.
+         */
+        HazardPointerGuard();
 
-private:
-    HazardPointer* m_hp;
-};
+        /**
+         * @brief Destructs the HazardPointerGuard and releases the hazard pointer.
+         */
+        ~HazardPointerGuard();
+
+        /**
+         * @brief Gets the underlying hazard pointer.
+         * @return A pointer to the managed HazardPointer.
+         */
+        [[nodiscard]] HazardPointer* Get() const { return m_hp; }
+
+    private:
+        HazardPointer* m_hp; ///< Pointer to the hazard-protected data
+    };
+}

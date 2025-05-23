@@ -4,15 +4,18 @@
 
 #include "HazardPointerManager.hpp"
 
-HazardPointerGuard::HazardPointerGuard() : m_hp(HazardPointerManager::GetInstance().Acquire()) {} // Acquire a hazard pointer slot for this thread
-
-HazardPointerGuard::~HazardPointerGuard()
+namespace KQueue
 {
-    if (m_hp)
+    HazardPointerGuard::HazardPointerGuard() : m_hp(HazardPointerManager::GetInstance().Acquire()) {} // Acquire a hazard pointer slot for this thread
+
+    HazardPointerGuard::~HazardPointerGuard()
     {
-        // Clear the hazard pointer's protected pointer before releasing
-        m_hp->mPtr.store(nullptr, std::memory_order_release);
-        // Release this hazard pointer slot so it can be reused by other threads
-        HazardPointerManager::Release(m_hp);
+        if (m_hp)
+        {
+            // Clear the hazard pointer's protected pointer before releasing
+            m_hp->mPtr.store(nullptr, std::memory_order_release);
+            // Release this hazard pointer slot so it can be reused by other threads
+            HazardPointerManager::Release(m_hp);
+        }
     }
 }

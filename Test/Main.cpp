@@ -9,7 +9,7 @@
 
 int main()
 {
-    LockFreeQueue<int> queue;
+	KQueue::LockFreeQueue<int> queue;
     std::atomic<int> produced{ 0 }, consumed{ 0 };
 
     constexpr int PRODUCERS = 4;
