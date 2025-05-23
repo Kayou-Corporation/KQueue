@@ -2,6 +2,7 @@
 
 #pragma once
 #include <HazardPointerManager.hpp>
+#include <optional>
 
 template <typename T>
 LockFreeQueue<T>::LockFreeQueue()
@@ -21,71 +22,62 @@ LockFreeQueue<T>::~LockFreeQueue()
 template <typename T>
 void LockFreeQueue<T>::Push(const T& value)
 {
-    Node* new_node = new Node(value);        // Allocate a new node containing the value
-    while (true)
+    Node* new_node = new Node(value);
+    while (true) 
     {
-        Node* last = m_tail.load(std::memory_order_acquire);     // Get the current tail
-        Node* next = last->mNext.load(std::memory_order_acquire); // Get the next pointer
-
-        if (last == m_tail.load(std::memory_order_acquire))      // Recheck consistency
+        Node* last = m_tail.load(std::memory_order_acquire);
+        Node* next = last->mNext.load(std::memory_order_acquire);
+        if (last == m_tail.load(std::memory_order_acquire)) 
         {
-            if (next == nullptr)             // If tail is at the end
+            if (next == nullptr) 
             {
-                // Try to link the new node to the current tail
-                if (last->mNext.compare_exchange_weak(
-                    next, new_node,
-                    std::memory_order_release, std::memory_order_relaxed))
+                if (last->mNext.compare_exchange_weak(next, new_node,
+                    std::memory_order_release,
+                    std::memory_order_relaxed)) 
                 {
-                    // Try to move tail to the new node (optional for performance)
-                    m_tail.compare_exchange_weak(
-                        last, new_node,
-                        std::memory_order_release, std::memory_order_relaxed);
+                    m_tail.compare_exchange_weak(last, new_node,
+                        std::memory_order_release,
+                        std::memory_order_relaxed);
                     return;
                 }
             }
-            else
+            else 
             {
-                // Tail was lagging behind, try to help advance it
-                m_tail.compare_exchange_weak(
-                    last, next,
-                    std::memory_order_release, std::memory_order_relaxed);
+                m_tail.compare_exchange_weak(last, next,
+                    std::memory_order_release,
+                    std::memory_order_relaxed);
             }
         }
     }
 }
 
 template <typename T>
-T* LockFreeQueue<T>::Pop()
-{
+T* LockFreeQueue<T>::Pop() {
     HazardPointerManager& hpm = HazardPointerManager::GetInstance();
-    HazardPointer* hp = hpm.Acquire();  // Acquire a hazard pointer for safety
+    HazardPointer* hp = hpm.Acquire();
 
-    while (true)
+    while (true) 
     {
         Node* first = m_head.load(std::memory_order_acquire);
-        hp->mPtr.store(first);                          // Protect this node from deletion
-        if (first != m_head.load(std::memory_order_acquire))  // Check for consistency
-        {
-            continue;
-        }
+        hp->mPtr.store(first);
+        if (first != m_head.load(std::memory_order_acquire)) continue;
 
         Node* next = first->mNext.load(std::memory_order_acquire);
-        if (next == nullptr)
+        if (next == nullptr) 
         {
-            HazardPointerManager::Release(hp);          // Nothing to pop
+            HazardPointerManager::Release(hp);
             return nullptr;
         }
 
-        T* result = next->mData;                         // Read the data (safe now)
-        if (m_head.compare_exchange_weak(
-            first, next,
-            std::memory_order_release, std::memory_order_relaxed))
+        T* result = new T(next->mData);  // Allocate copy
+        if (m_head.compare_exchange_weak(first, next, std::memory_order_release)) 
         {
-            hp->mPtr.store(nullptr);                    // Clear hazard
-            hpm.Release(hp);                            // Release hazard slot
-            hpm.RetireNode(first, ReclaimNode);         // Safe to retire the old head
+            hp->mPtr.store(nullptr);
+            hpm.Release(hp);
+            hpm.RetireNode(first, ReclaimNode);
             return result;
         }
+    	delete result;  // rollback
     }
 }
 

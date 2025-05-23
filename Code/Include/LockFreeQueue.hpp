@@ -17,12 +17,11 @@ public:
 private:
     struct Node
     {
-        T* mData;
+        T mData;
         std::atomic<Node*> mNext;
 
-        Node() : mData(nullptr), mNext(nullptr) {}
-        explicit Node(const T& value) : mData(new T(value)), mNext(nullptr) {}
-        ~Node() { delete mData; }
+        Node(const T& val) : mData(val), mNext(nullptr) {}
+        Node() : mNext(nullptr) {}  // Dummy node
     };
 
     std::atomic<Node*> m_head;
