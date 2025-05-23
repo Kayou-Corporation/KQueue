@@ -19,5 +19,5 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         with:
           force_orphan: true
-          publish_dir: Doc
+          publish_dir: Doc/html
           github_token: ${{ secrets.GITHUB_TOKEN }}
