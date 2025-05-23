@@ -19,11 +19,9 @@ public:
     static HazardPointerManager& GetInstance();
 
     HazardPointer* Acquire();
-
     static void Release(HazardPointer* hp);
-
     void RetireNode(void* node, void (*deleter)(void*)) const;
-
+    void ForceCleanup(void(*deleter)(void*)) const;
     bool IsHazard(void* p) const;
 
 private:

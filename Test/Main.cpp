@@ -55,5 +55,8 @@ int main()
     for (auto& c : consumers) c.join();
 
     std::cout << "Produced: " << produced << ", Consumed: " << consumed << "\n";
+
+    producers.clear();
+	consumers.clear();
     return 0;
 }

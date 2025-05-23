@@ -42,6 +42,11 @@ void HazardPointerManager::RetireNode(void* node, void(* deleter)(void*)) const
     }
 }
 
+void HazardPointerManager::ForceCleanup(void(* deleter)(void*)) const
+{
+    Scan(deleter);
+}
+
 bool HazardPointerManager::IsHazard(void* p) const
 {
     for (const auto& hpRecord : m_hpRecords)

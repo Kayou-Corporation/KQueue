@@ -16,6 +16,10 @@ template <typename T>
 LockFreeQueue<T>::~LockFreeQueue()
 {
     while (Pop()) {}                         // Drain remaining elements to safely reclaim memory
+
+    HazardPointerManager& hpm = HazardPointerManager::GetInstance();
+    hpm.ForceCleanup(ReclaimNode);
+
     delete m_head.load();                    // Delete the final dummy node
 }
 
