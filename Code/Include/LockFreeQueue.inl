@@ -62,9 +62,12 @@ T* LockFreeQueue<T>::Pop() {
 
     while (true) 
     {
-        Node* first = m_head.load(std::memory_order_acquire);
-        hp->mPtr.store(first);
-        if (first != m_head.load(std::memory_order_acquire)) continue;
+        Node* first;
+        do 
+        {
+            first = m_head.load(std::memory_order_acquire);
+            hp->mPtr.store(first, std::memory_order_release);
+        } while (first != m_head.load(std::memory_order_acquire));
 
         Node* next = first->mNext.load(std::memory_order_acquire);
         if (next == nullptr) 
@@ -81,6 +84,7 @@ T* LockFreeQueue<T>::Pop() {
             hpm.RetireNode(first, ReclaimNode);
             return result;
         }
+        hpm.Release(hp);
     	delete result;  // rollback
     }
 }

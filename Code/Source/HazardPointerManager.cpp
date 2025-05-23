@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-thread_local std::vector<void*> HazardPointerManager::m_retired;
+thread_local std::vector<void*> HazardPointerManager::m_retired = {nullptr};
 
 HazardPointerManager& HazardPointerManager::GetInstance()
 {
