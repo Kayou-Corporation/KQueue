@@ -19,6 +19,8 @@ int main()
     std::vector<std::thread> producers;
     std::vector<std::thread> consumers;
 
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     for (int i = 0; i < PRODUCERS; ++i) 
     {
         producers.emplace_back([&]() {
@@ -54,7 +56,11 @@ int main()
     for (auto& p : producers) p.join();
     for (auto& c : consumers) c.join();
 
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
     std::cout << "Produced: " << produced << ", Consumed: " << consumed << "\n";
+    std::cout << "Done in " << duration << " ms" << "\n";
 
     producers.clear();
 	consumers.clear();
