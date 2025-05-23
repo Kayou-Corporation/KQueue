@@ -4,9 +4,6 @@
 #include <atomic>
 #include <thread>
 #include <vector>
-#include <unordered_set>
-#include <cassert>
-#include <mutex>
 
 constexpr int MAX_HAZARD_POINTERS = 100;
 
