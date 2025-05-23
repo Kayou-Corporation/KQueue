@@ -2,7 +2,9 @@ name: Build and Deploy Doxygen Docs
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
+      - master
 
 jobs:
   deploy:
