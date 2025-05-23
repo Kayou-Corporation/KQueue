@@ -7,20 +7,17 @@ on:
       - master
 
 jobs:
-  deploy:
+
+  Doxygen:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Install Doxygen
-        run: sudo apt-get install doxygen -y
-
-      - name: Generate docs
-        run: doxygen ./Doc/Doxyfile
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: actions/checkout@v3
+      - uses: mattnotmitt/doxygen-action@v1.1.0
         with:
+          doxyfile-path: "Doc/doxygen.config"
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          force_orphan: true
+          publish_dir: Doc/html
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./Doc/html
