@@ -1,0 +1,13 @@
+/**
+ * @mainpage KQueue Project Documentation
+ *
+ * Welcome to the documentation for the KQueue project.
+ * This queue is designed for high-performance concurrent applications.
+ *
+ * ## Features
+ * - Lock-free queue
+ * - Hazard pointer memory safety
+ * - Multi-threaded ready
+ *
+ * See the class index for details.
+ */
